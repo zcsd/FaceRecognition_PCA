@@ -24,15 +24,12 @@ Mat mergeMatrix(int row, vector<string>& facesPath)
     for (int i = 0; i < col; i++) {
         Mat tmpMatrix = mergedMatrix.col(i);
         //Load grayscale image 0
-        Mat tmpImg = imread(facesPath[i], 0);
-        tmpImg.convertTo(tmpImg, CV_32FC1);
-        cout << "pixcel: " << tmpImg.at<float>(2,4) << endl;
-        //convert to (row x 1) matrix
-        tmpImg.reshape(1, row);
-        tmpImg.copyTo(tmpMatrix);
+        Mat tmpImg;
+        imread(facesPath[i], 0).convertTo(tmpImg, CV_32FC1);
+        //convert to 1D matrix
+        tmpImg.reshape(1, row).copyTo(tmpMatrix);
     }
     cout << "Merged Matix(row, col): " << mergedMatrix.rows << " X " << mergedMatrix.cols << endl;
-    cout << "pixcel: " << mergedMatrix.at<float>(5,4) << endl;
 
     return mergedMatrix;
 }
@@ -91,8 +88,8 @@ int main(int argc, char** argv)
     //Create a (imgSize X #ofSamples) floating 2D Matrix to store training data
     Mat trainFacesMatrix = mergeMatrix(imgSize, trainFacesPath);
     
-    //cout << "pixcel: " << trainFacesMatrix.at<float>(1,1) << endl;
-    
+    //To calculate average face
+
     waitKey();
     return 0;
 }
