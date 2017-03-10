@@ -15,6 +15,33 @@ using namespace std;
 void readFile(string&, vector<string>&, vector<string>&);
 int getImgSize(vector<string>&);
 Mat mergeMatrix(int, vector<string>&);
+Mat subtractMatrix(Mat, Mat);
+Mat getAverageVector(Mat, vector<string>&);
+
+Mat getAverageVector(Mat facesMatrix, vector<string>& facesPath)
+{
+    //To calculate average face, 1 means that the matrix is reduced to a single column.
+    //vector is 1D column vector, face is 2D Mat
+    Mat vector, face;
+    reduce(facesMatrix, vector, 1, CV_REDUCE_AVG);
+    vector.reshape(0, imread(facesPath[0],0).rows).copyTo(face);
+    //Just for display face
+    normalize(face, face, 0, 1, cv::NORM_MINMAX);
+    namedWindow("Average Face", CV_WINDOW_NORMAL);
+    imshow("Average Face", face);
+    
+    return vector;
+}
+
+Mat subtractMatrix(Mat facesMatrix, Mat avgVector)
+{
+    Mat resultMatrix;
+    facesMatrix.copyTo(resultMatrix);
+    for (int i = 0; i < resultMatrix.cols; i++) {
+        subtract(resultMatrix.col(i), avgVector, resultMatrix.col(i));
+    }
+    return resultMatrix;
+}
 
 Mat mergeMatrix(int row, vector<string>& facesPath)
 {
@@ -29,7 +56,7 @@ Mat mergeMatrix(int row, vector<string>& facesPath)
         //convert to 1D matrix
         tmpImg.reshape(1, row).copyTo(tmpMatrix);
     }
-    cout << "Merged Matix(row, col): " << mergedMatrix.rows << " X " << mergedMatrix.cols << endl;
+    cout << "Merged Matix(Width, Height): " << mergedMatrix.size() << endl;
 
     return mergedMatrix;
 }
@@ -43,7 +70,7 @@ int getImgSize(vector<string>& facesPath)
     }
     //Dimession of Features
     int size = sampleImg.rows * sampleImg.cols;
-    cout << "Per Image Size is: " << size << endl;
+    //cout << "Per Image Size is: " << size << endl;
     return size;
 }
 
@@ -69,27 +96,35 @@ void readFile(string& listFilePath, vector<string>& facesPath, vector<int>& face
         facesPath.push_back(path);
         facesID.push_back(atoi(id.c_str()));
     }
+    
+    for(int i = 0; i < facesPath.size(); i++) {
+        cout << facesID[i] << " : " << facesPath[i] << endl;
+    }
 }
 
 int main(int argc, char** argv)
 {
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/train_list.txt";
-
     vector<string> trainFacesPath;
     vector<int> trainFacesID;
-    //load training sets' ID and path to vector
-    readFile(trainListFilePath, trainFacesPath, trainFacesID);
     
-    for(int i = 0; i < trainFacesPath.size(); i++) {
-        cout << trainFacesID[i] << " : " << trainFacesPath[i] << endl;
-    }
-    //get dimession of each image
+    //Load training sets' ID and path to vector
+    readFile(trainListFilePath, trainFacesPath, trainFacesID);
+    //Get dimession of features for single image
     int imgSize = getImgSize(trainFacesPath);
     //Create a (imgSize X #ofSamples) floating 2D Matrix to store training data
     Mat trainFacesMatrix = mergeMatrix(imgSize, trainFacesPath);
-    
-    //To calculate average face
+    //Get average face vector
+    Mat trainAvgVector = getAverageVector(trainFacesMatrix, trainFacesPath);
+    //Subtract average face from faces matrix
+    Mat subTrainFaceMatrix = subtractMatrix(trainFacesMatrix, trainAvgVector);
 
+    /*
+    PCA trainPCA;
+    trainPCA = PCA(trainFacesMatrix, Mat(), CV_PCA_DATA_AS_COL, 30);
+    cout << "mean: " << trainPCA.eigenvalues << endl;
+     */
+    
     waitKey();
     return 0;
 }
