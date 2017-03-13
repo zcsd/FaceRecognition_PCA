@@ -140,12 +140,34 @@ int main(int argc, char** argv)
     Mat allEigenVectors;
     Mat allEigenValues;
     eigen(covarMatrix, allEigenValues, allEigenVectors);
+    
+    cout << allEigenVectors.size() << " ... " << subTrainFaceMatrix.size() << endl;
+    Mat eigenFaces = (subTrainFaceMatrix.t()) * (allEigenVectors.t());
+    cout << eigenFaces.size() << endl;
+    
+    for(int i = 0; i < eigenFaces.rows; i++ )
+    {
+        Mat tempVec = eigenFaces.row(i);
+        normalize(tempVec, tempVec);
+    }
+
+    Mat face;
+    eigenFaces.row(0).reshape(0, imread(trainFacesPath[0],0).rows).copyTo(face);
+    //Just for display face
+    normalize(face, face, 0, 1, cv::NORM_MINMAX);
+    namedWindow("face1", CV_WINDOW_NORMAL);
+    imshow("face1", face);
+    
+    /*
     //Keep only k best eigenvectors
     int largestEigenIndex = 50;
     Mat bestNomEigenVectors = getBestEigenVectors(allEigenVectors, largestEigenIndex);
     //Get final face reuslt
     Mat trainFacesResult = (subTrainFaceMatrix.t()) * (bestNomEigenVectors.t()) ;
     cout << "Result" <<trainFacesResult.size() << endl;
+    */
+    
+    
     
 /*    MatrixXf covar(10304,10304);
      for (int i = 0; i < 2; i++) {
