@@ -8,43 +8,68 @@
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
-//#include <Eigen/Dense>
+
+#define SHOW_IMAGE 1
 
 using namespace cv;
 using namespace std;
-//using namespace Eigen;
 
 void readFile(string&, vector<string>&, vector<string>&);
 int getImgSize(vector<string>&);
 Mat mergeMatrix(int, vector<string>&);
 Mat subtractMatrix(Mat, Mat);
-Mat getAverageVector(Mat, vector<string>&);
-Mat getBestEigenVectors(Mat, int);
+Mat getAverageVector(Mat, int);
+Mat getBestEigenVectors(Mat, Mat, int);
 
-Mat getBestEigenVectors(Mat allVectors, int largest)
+Mat getBestEigenVectors(Mat covar, Mat difference, int imgRows)
 {
-    Mat bestVectors(largest, allVectors.cols, CV_32FC1);
-    //normalized already
-    for (int i = 0; i < largest; i++) {
-        Mat tmpMatrix = bestVectors.row(i);
-        allVectors.row(i).copyTo(tmpMatrix);
+    //Get all eigenvalues and eigenvectors from covariance matrix
+    Mat allEigenValues, allEigenVectors;
+    eigen(covar, allEigenValues, allEigenVectors);
+    
+    Mat eigenVec = allEigenVectors * (difference.t());
+    //Normalize eigenvectors
+    for(int i = 0; i < eigenVec.rows; i++ )
+    {
+        Mat tempVec = eigenVec.row(i);
+        normalize(tempVec, tempVec);
     }
-
-    return bestVectors;
+    
+    if (SHOW_IMAGE) {
+        //Display eigen face
+        Mat eigenFaces, allEigenFaces;
+        for (int i = 0; i < eigenVec.rows; i++) {
+            eigenVec.row(i).reshape(0, imgRows).copyTo(eigenFaces);
+            normalize(eigenFaces, eigenFaces, 0, 1, cv::NORM_MINMAX);
+            if(i == 0){
+                allEigenFaces = eigenFaces;
+            }else{
+                hconcat(allEigenFaces, eigenFaces, allEigenFaces);
+            }
+        }
+        
+        namedWindow("EigenFaces", CV_WINDOW_NORMAL);
+        imshow("EigenFaces", allEigenFaces);
+    }
+    
+    return eigenVec;
 }
 
-Mat getAverageVector(Mat facesMatrix, vector<string>& facesPath)
+Mat getAverageVector(Mat facesMatrix, int imgRows)
 {
     //To calculate average face, 1 means that the matrix is reduced to a single column.
     //vector is 1D column vector, face is 2D Mat
     Mat vector, face;
     reduce(facesMatrix, vector, 1, CV_REDUCE_AVG);
-    vector.reshape(0, imread(facesPath[0],0).rows).copyTo(face);
-    //Just for display face
-    normalize(face, face, 0, 1, cv::NORM_MINMAX);
-    namedWindow("Average Face", CV_WINDOW_NORMAL);
-    imshow("Average Face", face);
-
+    
+    if (SHOW_IMAGE) {
+        vector.reshape(0, imgRows).copyTo(face);
+        //Just for display face
+        normalize(face, face, 0, 1, cv::NORM_MINMAX);
+        namedWindow("AverageFace", CV_WINDOW_NORMAL);
+        imshow("AverageFace", face);
+    }
+    
     return vector;
 }
 
@@ -71,7 +96,7 @@ Mat mergeMatrix(int row, vector<string>& facesPath)
         //convert to 1D matrix
         tmpImg.reshape(1, row).copyTo(tmpMatrix);
     }
-    cout << "Merged Matix(Width, Height): " << mergedMatrix.size() << endl;
+    //cout << "Merged Matix(Width, Height): " << mergedMatrix.size() << endl;
 
     return mergedMatrix;
 }
@@ -127,83 +152,19 @@ int main(int argc, char** argv)
     readFile(trainListFilePath, trainFacesPath, trainFacesID);
     //Get dimession of features for single image
     int imgSize = getImgSize(trainFacesPath);
+    int imgRows = imread(trainFacesPath[0],0).rows;
     //Create a (imgSize X #ofSamples) floating 2D Matrix to store training data
     Mat trainFacesMatrix = mergeMatrix(imgSize, trainFacesPath);
     //Get average face vector
-    Mat trainAvgVector = getAverageVector(trainFacesMatrix, trainFacesPath);
+    Mat trainAvgVector = getAverageVector(trainFacesMatrix, imgRows);
     //Subtract average face from faces matrix
     Mat subTrainFaceMatrix = subtractMatrix(trainFacesMatrix, trainAvgVector);
     //Get covariance matrix
-    //calcCovarMatrix(subTrainFaceMatrix, covarMatrix, meanMatrix, CV_COVAR_ROWS, CV_COVAR_SCRAMBLED);
-    Mat covarMatrix =  0.2 * (subTrainFaceMatrix * (subTrainFaceMatrix.t()) ) ;
-    //Get all eigenvalues and eigenvectors from covariance matrix
-    Mat allEigenVectors;
-    Mat allEigenValues;
-    eigen(covarMatrix, allEigenValues, allEigenVectors);
-    
-    cout << allEigenVectors.size() << " ... " << subTrainFaceMatrix.size() << endl;
-    Mat eigenFaces = (subTrainFaceMatrix.t()) * (allEigenVectors.t());
-    cout << eigenFaces.size() << endl;
-    
-    for(int i = 0; i < eigenFaces.rows; i++ )
-    {
-        Mat tempVec = eigenFaces.row(i);
-        normalize(tempVec, tempVec);
-    }
+    Mat covarMatrix = (subTrainFaceMatrix.t()) * subTrainFaceMatrix;
+    //Get eigenvectors
+    Mat eigenVectors = getBestEigenVectors(covarMatrix, subTrainFaceMatrix, imgRows);
+    cout << "Eigenvectors(W, H): " <<eigenVectors.size() << endl;
 
-    Mat face;
-    eigenFaces.row(0).reshape(0, imread(trainFacesPath[0],0).rows).copyTo(face);
-    //Just for display face
-    normalize(face, face, 0, 1, cv::NORM_MINMAX);
-    namedWindow("face1", CV_WINDOW_NORMAL);
-    imshow("face1", face);
-    
-    /*
-    //Keep only k best eigenvectors
-    int largestEigenIndex = 50;
-    Mat bestNomEigenVectors = getBestEigenVectors(allEigenVectors, largestEigenIndex);
-    //Get final face reuslt
-    Mat trainFacesResult = (subTrainFaceMatrix.t()) * (bestNomEigenVectors.t()) ;
-    cout << "Result" <<trainFacesResult.size() << endl;
-    */
-    
-    
-    
-/*    MatrixXf covar(10304,10304);
-     for (int i = 0; i < 2; i++) {
-     for (int j = 0; j < 2; j++) {
-     covar(i, j) = covarMatrix.at<float>(i,j);
-     }
-     //cout << endl;
-     }
-     cout << "tstdsfgfg: " << covarMatrix.at<float>(0,0) << endl;
-     cout << "tstdsfgfg: " << covar(0,0) << endl;
-     EigenSolver<MatrixXf> sol_A;
-     cout << "fdsfffffff" << endl;
-     sol_A.compute(covar);
-     cout << "aaaaaaa" << endl;
-     //MatrixXf eigenvals_A =sol_A.eigenvalues().real();
-     MatrixXf eigenvecs_A =sol_A.eigenvectors().real();
-     cout << "bbbbbbbaa" << endl;
-     cout << "fsdfdsf " << eigenvecs_A(0,0) << endl;
-     cout << "fsdfdsf " << eigenvecs_A(0,1) << endl;
-     cout << "fsdfdsf " << eigenvecs_A(1,0) << endl;
-     cout << "fsdfdsf " << eigenvecs_A(1,1) << endl;
-     
-     
-     PCA trainPCA;
-     trainPCA = PCA(trainFacesMatrix, Mat(), CV_PCA_DATA_AS_COL, 10000);
-     //cout << "pca: " << trainPCA.eigenvectors << endl;
-     
-     Mat Face1;
-     trainPCA.eigenvectors.row(0).reshape(0, imread(trainFacesPath[0],0).rows).copyTo(Face1);
-     cout << Face1.size() << endl;
-     normalize(Face1, Face1, 0, 1, cv::NORM_MINMAX);
-     namedWindow("1 Face", CV_WINDOW_NORMAL);
-     imshow("1 Face", Face1);
-     cout << Face1.at<float>(0,0) << endl;
-     */
-    
     waitKey();
     return 0;
 }
