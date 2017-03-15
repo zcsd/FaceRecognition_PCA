@@ -20,6 +20,22 @@ Mat mergeMatrix(int, vector<string>&);
 Mat subtractMatrix(Mat, Mat);
 Mat getAverageVector(Mat, int);
 Mat getBestEigenVectors(Mat, Mat, int);
+Mat getProjectedFaces(Mat, Mat, Mat);
+
+Mat getProjectedFaces(Mat inputFaceVec, Mat meanFaceVec, Mat eigenVecs){
+    Mat prjFace, tmpData;
+    
+    if (inputFaceVec.cols != 1 || meanFaceVec.cols != 1 || inputFaceVec.rows != meanFaceVec.rows) {
+        cout << "Wrong Input in getProjectedFaces!" << endl;
+        exit(1);
+    }
+    subtract(inputFaceVec, meanFaceVec, tmpData);
+    prjFace = eigenVecs * tmpData;
+    cout << "Projected Face(W, H):" <<prjFace.size() << endl;
+    //cout << prjFace.at<float>(0) << endl;
+    
+    return prjFace;
+}
 
 Mat getBestEigenVectors(Mat covar, Mat difference, int imgRows)
 {
@@ -164,6 +180,16 @@ int main(int argc, char** argv)
     //Get eigenvectors
     Mat eigenVectors = getBestEigenVectors(covarMatrix, subTrainFaceMatrix, imgRows);
     cout << "Eigenvectors(W, H): " <<eigenVectors.size() << endl;
+    //cout << eigenVectors.at<float>(0,0) << "--" << eigenVectors.at<float>(0,1) << endl;
+    /*
+    PCA pca = PCA(trainFacesMatrix, Mat(), CV_PCA_DATA_AS_COL);
+    cout << pca.eigenvectors.at<float>(0, 0) << "--" << pca.eigenvectors.at<float>(0,1) << endl;
+    Mat tempFace1 = pca.project(trainFacesMatrix.col(0));
+    cout << tempFace1.size() << endl;
+    cout << tempFace1.at<float>(0) << endl;
+    */
+    //Project input face to eigen space
+    Mat projectedFace = getProjectedFaces(trainFacesMatrix.col(0), trainAvgVector, eigenVectors);
 
     waitKey();
     return 0;
