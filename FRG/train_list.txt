@@ -3,3 +3,8 @@
 1;att_faces/s1/3.pgm
 1;att_faces/s1/4.pgm
 1;att_faces/s1/5.pgm
+2;att_faces/s2/1.pgm
+2;att_faces/s2/2.pgm
+2;att_faces/s2/3.pgm
+2;att_faces/s2/4.pgm
+2;att_faces/s2/5.pgm

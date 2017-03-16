@@ -164,6 +164,8 @@ int main(int argc, char** argv)
     vector<string> trainFacesPath;
     vector<int> trainFacesID;
     
+    Mat testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/DerivedData/FaceRecognition/Build/Products/Debug/att_faces/s2/8.pgm",0);
+    
     //Load training sets' ID and path to vector
     readFile(trainListFilePath, trainFacesPath, trainFacesID);
     //Get dimession of features for single image
@@ -189,8 +191,37 @@ int main(int argc, char** argv)
     cout << tempFace1.at<float>(0) << endl;
     */
     //Project input face to eigen space
-    Mat projectedFace = getProjectedFaces(trainFacesMatrix.col(0), trainAvgVector, eigenVectors);
+    vector<Mat> baseFaces;
+    for (int i = 0; i < trainFacesPath.size(); i++){
+        baseFaces.push_back(getProjectedFaces(trainFacesMatrix.col(i), trainAvgVector, eigenVectors));
+    }
 
+    Mat testVec;
+    testImg.convertTo(testImg, CV_32FC1);
+    testImg.reshape(0, imgSize).copyTo(testVec);
+    cout <<  testVec.size() << endl;
+    cout <<  trainFacesMatrix.col(0).size() << endl;
+
+    Mat testFace = getProjectedFaces(testVec, trainAvgVector, eigenVectors);
+
+    double closetFaceDist = 10000;
+    int closetFaceID = -1;
+
+    for (int i =0; i < baseFaces.size(); i++) {
+        Mat src1 = baseFaces[i];
+        Mat src2 = testFace;
+        
+        double dist = norm(src1, src2, NORM_L2);
+        cout << dist << endl;
+        
+        if (dist < closetFaceDist) {
+            closetFaceDist = dist;
+            closetFaceID = trainFacesID[i];
+        }
+    }
+    
+    cout << "Which Face: " << closetFaceID << endl;
+ 
     waitKey();
     return 0;
 }
