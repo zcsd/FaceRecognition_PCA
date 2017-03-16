@@ -21,6 +21,29 @@ Mat subtractMatrix(Mat, Mat);
 Mat getAverageVector(Mat, int);
 Mat getBestEigenVectors(Mat, Mat, int);
 Mat getProjectedFaces(Mat, Mat, Mat);
+int recogniseFace(Mat, vector<Mat>&, vector<int>&);
+
+int recogniseFace(Mat testFace, vector<Mat>& trainFaces, vector<int>& trainFacesID)
+{
+    double closetFaceDist = 4000;
+    int closetFaceID = -1;
+    
+    for (int i =0; i < trainFaces.size(); i++) {
+        Mat src1 = trainFaces[i];
+        Mat src2 = testFace;
+        
+        double dist = norm(src1, src2, NORM_L2);
+        //cout << dist << endl;
+        
+        if (dist < closetFaceDist) {
+            closetFaceDist = dist;
+            closetFaceID = trainFacesID[i];
+        }
+    }
+    cout << "Closet Distance: " <<closetFaceDist << endl;
+    
+    return closetFaceID;
+}
 
 Mat getProjectedFaces(Mat inputFaceVec, Mat meanFaceVec, Mat eigenVecs){
     Mat prjFace, tmpData;
@@ -31,7 +54,7 @@ Mat getProjectedFaces(Mat inputFaceVec, Mat meanFaceVec, Mat eigenVecs){
     }
     subtract(inputFaceVec, meanFaceVec, tmpData);
     prjFace = eigenVecs * tmpData;
-    cout << "Projected Face(W, H):" <<prjFace.size() << endl;
+    //cout << "Projected Face(W, H):" <<prjFace.size() << endl;
     //cout << prjFace.at<float>(0) << endl;
     
     return prjFace;
@@ -182,46 +205,26 @@ int main(int argc, char** argv)
     //Get eigenvectors
     Mat eigenVectors = getBestEigenVectors(covarMatrix, subTrainFaceMatrix, imgRows);
     cout << "Eigenvectors(W, H): " <<eigenVectors.size() << endl;
-    //cout << eigenVectors.at<float>(0,0) << "--" << eigenVectors.at<float>(0,1) << endl;
-    /*
-    PCA pca = PCA(trainFacesMatrix, Mat(), CV_PCA_DATA_AS_COL);
-    cout << pca.eigenvectors.at<float>(0, 0) << "--" << pca.eigenvectors.at<float>(0,1) << endl;
-    Mat tempFace1 = pca.project(trainFacesMatrix.col(0));
-    cout << tempFace1.size() << endl;
-    cout << tempFace1.at<float>(0) << endl;
-    */
-    //Project input face to eigen space
+
+    //Project training face to eigen space
     vector<Mat> baseFaces;
     for (int i = 0; i < trainFacesPath.size(); i++){
         baseFaces.push_back(getProjectedFaces(trainFacesMatrix.col(i), trainAvgVector, eigenVectors));
     }
-
+    //reshape input test image
     Mat testVec;
     testImg.convertTo(testImg, CV_32FC1);
     testImg.reshape(0, imgSize).copyTo(testVec);
-    cout <<  testVec.size() << endl;
-    cout <<  trainFacesMatrix.col(0).size() << endl;
-
+    //Project test face to eigen space
     Mat testFace = getProjectedFaces(testVec, trainAvgVector, eigenVectors);
-
-    double closetFaceDist = 10000;
-    int closetFaceID = -1;
-
-    for (int i =0; i < baseFaces.size(); i++) {
-        Mat src1 = baseFaces[i];
-        Mat src2 = testFace;
-        
-        double dist = norm(src1, src2, NORM_L2);
-        cout << dist << endl;
-        
-        if (dist < closetFaceDist) {
-            closetFaceDist = dist;
-            closetFaceID = trainFacesID[i];
-        }
+    //Face Recognisation and get result
+    int testResultFaceID = recogniseFace(testFace, baseFaces, trainFacesID);
+    if (testResultFaceID != -1) {
+        cout << "Face ID: " << testResultFaceID << endl;
+    }else{
+        cout << "Unknown Face." << endl;
     }
     
-    cout << "Which Face: " << closetFaceID << endl;
- 
     waitKey();
     return 0;
 }
