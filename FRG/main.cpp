@@ -9,6 +9,8 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 
+#include "GetFrame.h"
+
 #define SHOW_IMAGE 1
 
 using namespace cv;
@@ -136,7 +138,7 @@ Mat mergeMatrix(int row, vector<string>& facesPath)
         tmpImg.reshape(1, row).copyTo(tmpMatrix);
     }
     //cout << "Merged Matix(Width, Height): " << mergedMatrix.size() << endl;
-
+    
     return mergedMatrix;
 }
 
@@ -183,10 +185,17 @@ void readFile(string& listFilePath, vector<string>& facesPath, vector<int>& face
 
 int main(int argc, char** argv)
 {
+    Mat frame;
+    namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
+    //Initialize capture
+    GetFrame getFrame(1);
+    getFrame.getNextFrame(frame);
+    imshow("Face Recognisation", frame);
+    //PCA
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/train_list.txt";
     vector<string> trainFacesPath;
     vector<int> trainFacesID;
-    
+    //Load testing image
     Mat testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/DerivedData/FaceRecognition/Build/Products/Debug/att_faces/s2/8.pgm",0);
     
     //Load training sets' ID and path to vector
@@ -205,7 +214,7 @@ int main(int argc, char** argv)
     //Get eigenvectors
     Mat eigenVectors = getBestEigenVectors(covarMatrix, subTrainFaceMatrix, imgRows);
     cout << "Eigenvectors(W, H): " <<eigenVectors.size() << endl;
-
+    
     //Project training face to eigen space
     vector<Mat> baseFaces;
     for (int i = 0; i < trainFacesPath.size(); i++){
