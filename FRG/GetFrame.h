@@ -11,7 +11,7 @@ class GetFrame
 {
 public:
     GetFrame(bool startFrame = 1);
-    virtual ~GetFrame();
+    ~GetFrame();
     bool getNextFrame(Mat &frame);
 private:
     VideoCapture _vid;
