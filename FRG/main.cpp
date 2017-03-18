@@ -10,6 +10,7 @@
 #include "MyPCA.h"
 #include "FaceRecognizer.h"
 #include "WriteTrainData.h"
+#include "FaceDetector.h"
 
 using namespace cv;
 using namespace std;
@@ -26,6 +27,10 @@ int main(int argc, char** argv)
     //TO Load Training Data
     
     //TO DO FACE DETECTION
+    FaceDetector faceDetector;
+    vector<Rect> facesRect;
+    faceDetector.findFacesInImage(frame, facesRect);
+    cout << facesRect.size() << endl;
     
     //TO prepare test face
 
