@@ -6,6 +6,7 @@
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core.hpp"
+#include "opencv2/highgui.hpp"
 
 using namespace std;
 using namespace cv;
@@ -14,13 +15,11 @@ class FaceDetector {
 public:
     FaceDetector();
     ~FaceDetector();
-    void findFacesInImage(Mat img, vector<Rect> &res);
+    void findFacesInImage(Mat &frameRGB, vector<Rect> &facesRec);
 private:
-    CascadeClassifier _cascade;
-    double _scaleFactor;
-    int    _minNeighbors;
-    double _minSizeRatio;
-    double _maxSizeRatio;
+    CascadeClassifier face_cascade;
+    CascadeClassifier eye_cascade;
+
 };
 
 #endif

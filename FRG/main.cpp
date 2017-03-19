@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     //Initialize capture
     GetFrame getFrame(1);
     getFrame.getNextFrame(frame);
-    imshow("Face Recognisation", frame);
+    //imshow("Face Recognisation", frame);
     
     //TO Load Training Data
     
@@ -30,8 +30,8 @@ int main(int argc, char** argv)
     FaceDetector faceDetector;
     vector<Rect> facesRect;
     faceDetector.findFacesInImage(frame, facesRect);
-    cout << facesRect.size() << endl;
-    
+    //cout << facesRect.size() << endl;
+    imshow("Face Recognisation", frame);
     //TO prepare test face
 
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/train_list.txt";
