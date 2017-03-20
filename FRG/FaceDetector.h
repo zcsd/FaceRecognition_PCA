@@ -15,11 +15,14 @@ class FaceDetector {
 public:
     FaceDetector();
     ~FaceDetector();
-    void findFacesInImage(Mat &frameRGB, vector<Rect> &facesRec);
+    void findFacesInImage(Mat &frameRGB);
+    bool goodFace();
+    Mat getFaceToTest();
 private:
     CascadeClassifier face_cascade;
     CascadeClassifier eye_cascade;
-
+    bool faceFlag = 1;
+    Mat faceToTest;
 };
 
 #endif

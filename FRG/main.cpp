@@ -28,8 +28,7 @@ int main(int argc, char** argv)
     
     //TO DO FACE DETECTION
     FaceDetector faceDetector;
-    vector<Rect> facesRect;
-    faceDetector.findFacesInImage(frame, facesRect);
+    faceDetector.findFacesInImage(frame);
     //cout << facesRect.size() << endl;
     imshow("Face Recognisation", frame);
     //TO prepare test face
