@@ -29,6 +29,15 @@ int main(int argc, char** argv)
     //TO DO FACE DETECTION
     FaceDetector faceDetector;
     faceDetector.findFacesInImage(frame);
+    
+    Mat testImg;
+    if (faceDetector.goodFace()) {
+        testImg = faceDetector.getFaceToTest();
+        imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
+    }else{
+        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
+    }
+    
     //cout << facesRect.size() << endl;
     imshow("Face Recognisation", frame);
     //TO prepare test face
@@ -38,7 +47,7 @@ int main(int argc, char** argv)
     vector<int> trainFacesID;
     
     //Tempory using....Load testing image
-    Mat testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/att_faces/s2/9.pgm",0);
+    //Mat testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
 
     //Load training sets' ID and path to vector
     readList(trainListFilePath, trainFacesPath, trainFacesID);

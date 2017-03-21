@@ -34,9 +34,12 @@ void FaceDetector::findFacesInImage(Mat &frameRGB) {
         rectangle(frameRGB, facesRec[0], Scalar( 255, 0, 255 ), 4);
         
         Mat faceROI = frameGray(facesRec[0]);
-        cout << "ROI SIZE " << faceROI.size() << endl;
-        vector<Rect> eyes;
+        //cout << "ROI SIZE " << faceROI.size() << endl;
+        faceROI.copyTo(faceToTest);
+        resize(faceToTest, faceToTest, Size(100,100));
+        faceFlag = 1;
         
+        vector<Rect> eyes;
         //detect eyes
         eye_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CASCADE_SCALE_IMAGE, Size(30, 30) );
         cout << "eyes: " << eyes.size() << endl;

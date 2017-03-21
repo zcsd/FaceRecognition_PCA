@@ -1,6 +1,6 @@
 #include "MyPCA.h"
 
-#define SHOW_IMAGE 1
+#define SHOW_IMAGE 0
 
 MyPCA::MyPCA(vector<string>& _facesPath)
 {

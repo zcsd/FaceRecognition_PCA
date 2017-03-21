@@ -21,7 +21,7 @@ public:
 private:
     CascadeClassifier face_cascade;
     CascadeClassifier eye_cascade;
-    bool faceFlag = 1;
+    bool faceFlag = 0;
     Mat faceToTest;
 };
 
