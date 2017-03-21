@@ -5,7 +5,7 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 
-#include "ReadList.h"
+#include "ReadFile.h"
 #include "GetFrame.h"
 #include "MyPCA.h"
 #include "FaceRecognizer.h"
@@ -32,37 +32,41 @@ int main(int argc, char** argv)
     
     Mat testImg;
     if (faceDetector.goodFace()) {
+        //testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
         testImg = faceDetector.getFaceToTest();
-        imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
+        //imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s5.bmp", testImg);
     }else{
         testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
     }
     
-    //cout << facesRect.size() << endl;
     imshow("Face Recognisation", frame);
-    //TO prepare test face
-
+    
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/train_list.txt";
     vector<string> trainFacesPath;
-    vector<int> trainFacesID;
-    
-    //Tempory using....Load testing image
-    //Mat testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
+    vector<string> trainFacesID;
 
     //Load training sets' ID and path to vector
     readList(trainListFilePath, trainFacesPath, trainFacesID);
     //do PCA analysis for training faces
     MyPCA myPCA = MyPCA(trainFacesPath);
     //Write trainning data to file
-    WriteTrainData wtd = WriteTrainData(myPCA);
-    //final step: recognize new face from training faces
+    WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
+    /////////////////////////Load data
+    
+    
+    
+    
+    
+    ////////////////////////from file
     Mat avgVec = myPCA.getAverage();
     Mat eigenVec = myPCA.getEigenvectors();
     Mat facesInEigen = wtd.getFacesInEigen();
+    
+    //final step: recognize new face from training faces
     FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
     // Show Result
-    int faceID = faceRecognizer.getClosetFaceID();
-    if (faceID != -1) {
+    string faceID = faceRecognizer.getClosetFaceID();
+    if (faceID != "None") {
         cout << "Face ID: " << faceID;
         cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
     }else{

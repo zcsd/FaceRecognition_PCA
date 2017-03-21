@@ -1,5 +1,5 @@
-#ifndef READ_LIST_H
-#define READ_LIST_H
+#ifndef READ_FILE_H
+#define READ_FILE_H
 
 #include <stdio.h>
 #include <unistd.h>
@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void readList(string& listFilePath, vector<string>& facesPath, vector<int>& facesID)
+void readList(string& listFilePath, vector<string>& facesPath, vector<string>& facesID)
 {
     ifstream file(listFilePath.c_str(), ifstream::in);
     
@@ -31,13 +31,9 @@ void readList(string& listFilePath, vector<string>& facesPath, vector<int>& face
         path.erase(remove(path.begin(), path.end(), ' '), path.end());
         
         facesPath.push_back(path);
-        facesID.push_back(atoi(id.c_str()));
+        //facesID.push_back(atoi(id.c_str()));
+        facesID.push_back(id);
     }
-    /*
-    for(int i = 0; i < facesPath.size(); i++)
-        cout << facesID[i] << " : " << facesPath[i] << endl;
-     */
-    
 }
 
 #endif
