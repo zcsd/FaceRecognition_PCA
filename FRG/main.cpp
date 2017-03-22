@@ -35,7 +35,7 @@ int main(int argc, char** argv)
         
     }
     */
-    Mat frame;
+    Mat frame, processed;
     namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
     //Initialize capture
     GetFrame getFrame(1);
@@ -43,15 +43,15 @@ int main(int argc, char** argv)
     
     //TO DO FACE DETECTION
     FaceDetector faceDetector;
-    faceDetector.findFacesInImage(frame);
+    faceDetector.findFacesInImage(frame, processed);
     
     Mat testImg;
     if (faceDetector.goodFace()) {
         //testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
         testImg = faceDetector.getFaceToTest();
-        imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
+        //imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
     }else{
-        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s8.bmp",0);
+        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/13/s8.bmp",0);
     }
     
     //do PCA analysis for training faces
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         cout << "Unkown Face" << endl;
     }
     
-    imshow("Face Recognisation", frame);
+    imshow("Face Recognisation", processed);
     
     waitKey();
     return 0;

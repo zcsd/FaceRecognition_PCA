@@ -15,7 +15,7 @@ class FaceDetector {
 public:
     FaceDetector();
     ~FaceDetector();
-    void findFacesInImage(Mat &frameRGB);
+    void findFacesInImage(Mat &frameRGB, Mat &toTest);
     bool goodFace();
     Mat getFaceToTest();
 private:

@@ -6,9 +6,9 @@ GetFrame::GetFrame(bool startFrame):_startFrame(startFrame)
     _vid.open(0);
     
     if ( _vid.isOpened() ) {
-        _vid.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-        _vid.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
-        cout << "Initialize Capture(640x480) Successfully. " << endl;
+        _vid.set(CV_CAP_PROP_FRAME_WIDTH, 480);
+        _vid.set(CV_CAP_PROP_FRAME_HEIGHT, 640);
+        cout << "Initialize Capture Successfully. " << endl;
     }else{
         cout << "ERROR: ***Could not initialize capturing***" << endl;
     }
