@@ -49,19 +49,16 @@ int main(int argc, char** argv)
     if (faceDetector.goodFace()) {
         //testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
         testImg = faceDetector.getFaceToTest();
-        //imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s5.bmp", testImg);
+        imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
     }else{
-        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
+        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s8.bmp",0);
     }
-    
-    imshow("Face Recognisation", frame);
     
     //do PCA analysis for training faces
     MyPCA myPCA = MyPCA(trainFacesPath);
     //Write trainning data to file
     WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
     /////////////////////////Load data
-    /*
     bool flag = 1;
     Mat avgVec, eigenVec, facesInEigen;
     if ( flag ) {
@@ -73,20 +70,7 @@ int main(int argc, char** argv)
         eigenVec = myPCA.getEigenvectors();
         facesInEigen = wtd.getFacesInEigen();
     }
-     */
     
-    Mat avgVec1, eigenVec1, facesInEigen1;
-    facesInEigen1 =  readFaces(int(trainFacesID.size()));
-    avgVec1 = readMean();
-    eigenVec1 = readEigen(int(trainFacesID.size()));
-    Mat avgVec, eigenVec, facesInEigen;
-    avgVec = myPCA.getAverage();
-    eigenVec = myPCA.getEigenvectors();
-    facesInEigen = wtd.getFacesInEigen();
-    
-    cout << facesInEigen1.at<float>(0,0) << "  " << facesInEigen.at<float>(0,0) << endl;
-    cout << avgVec1.at<float>(0,0) << "  " << avgVec.at<float>(0,0) << endl;
-    cout << eigenVec1.at<float>(0,0) << "  " << eigenVec.at<float>(0,0) << endl;
     //final step: recognize new face from training faces
     FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
     // Show Result
@@ -97,7 +81,9 @@ int main(int argc, char** argv)
     }else{
         cout << "Unkown Face" << endl;
     }
-
+    
+    imshow("Face Recognisation", frame);
+    
     waitKey();
     return 0;
 }

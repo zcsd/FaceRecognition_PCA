@@ -109,7 +109,7 @@ Mat readEigen(int noOfFaces)
         for (int j = 0; j < eigen.cols; j++) {
             string data;
             getline(lines, data, ' ');
-            eigen.row(i).at<float>(j) = atof(data.c_str());
+            eigen.at<float>(i,j) = atof(data.c_str());
         }
     }
     
