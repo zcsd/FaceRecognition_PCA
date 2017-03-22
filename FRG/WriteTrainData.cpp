@@ -28,7 +28,7 @@ void WriteTrainData::project(MyPCA _trainPCA)
 
 void WriteTrainData::writeTrainFacesData(vector<string>& _trainFacesID)
 {
-    string facesDataPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/facesdata.txt";
+    string facesDataPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/data/facesdata.txt";
     ofstream writeFaceFile(facesDataPath.c_str(), ofstream::out | ofstream::trunc);
     if (!writeFaceFile) {
         cout << "Fail to open file: " << facesDataPath << endl;
@@ -49,7 +49,7 @@ void WriteTrainData::writeTrainFacesData(vector<string>& _trainFacesID)
 
 void WriteTrainData::writeMean(Mat avg)
 {
-    string meanPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/mean.txt";
+    string meanPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/data/mean.txt";
     ofstream writeMeanFile(meanPath.c_str(), ofstream::out | ofstream::trunc);
     if (!writeMeanFile) {
         cout << "Fail to open file: " << meanPath << endl;
@@ -65,7 +65,7 @@ void WriteTrainData::writeMean(Mat avg)
 
 void WriteTrainData::writeEigen(Mat eigen)
 {
-    string eigenPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/eigen.txt";
+    string eigenPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/data/eigen.txt";
     ofstream writeEigenFile(eigenPath.c_str(), ofstream::out | ofstream::trunc);
     if (!writeEigenFile) {
         cout << "Fail to open file: " << eigenPath << endl;

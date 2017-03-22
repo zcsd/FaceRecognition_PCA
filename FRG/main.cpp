@@ -17,14 +17,29 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/list/train_list.txt";
+    vector<string> trainFacesPath;
+    vector<string> trainFacesID;
+    readList(trainListFilePath, trainFacesPath, trainFacesID);
+    /*
+    cout << "++++++Welcome to Face Recognisation System++++++" << endl;
+    cout << "Do you want to do training?(Y/N): ";
+    char choice;
+    scanf("%s", &choice);
+    
+    if (choice == 'Y' || choice == 'y') {
+        cout << "Training Start......" << endl;
+        
+    }else{
+        cout << "Recognise Start......" << endl;
+        
+    }
+    */
     Mat frame;
     namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
     //Initialize capture
     GetFrame getFrame(1);
     getFrame.getNextFrame(frame);
-    //imshow("Face Recognisation", frame);
-    
-    //TO Load Training Data
     
     //TO DO FACE DETECTION
     FaceDetector faceDetector;
@@ -41,27 +56,37 @@ int main(int argc, char** argv)
     
     imshow("Face Recognisation", frame);
     
-    string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/train_list.txt";
-    vector<string> trainFacesPath;
-    vector<string> trainFacesID;
-
-    //Load training sets' ID and path to vector
-    readList(trainListFilePath, trainFacesPath, trainFacesID);
     //do PCA analysis for training faces
     MyPCA myPCA = MyPCA(trainFacesPath);
     //Write trainning data to file
     WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
     /////////////////////////Load data
+    /*
+    bool flag = 1;
+    Mat avgVec, eigenVec, facesInEigen;
+    if ( flag ) {
+        facesInEigen =  readFaces(int(trainFacesID.size()));
+        avgVec = readMean();
+        eigenVec = readEigen(int(trainFacesID.size()));
+    }else{
+        avgVec = myPCA.getAverage();
+        eigenVec = myPCA.getEigenvectors();
+        facesInEigen = wtd.getFacesInEigen();
+    }
+     */
     
+    Mat avgVec1, eigenVec1, facesInEigen1;
+    facesInEigen1 =  readFaces(int(trainFacesID.size()));
+    avgVec1 = readMean();
+    eigenVec1 = readEigen(int(trainFacesID.size()));
+    Mat avgVec, eigenVec, facesInEigen;
+    avgVec = myPCA.getAverage();
+    eigenVec = myPCA.getEigenvectors();
+    facesInEigen = wtd.getFacesInEigen();
     
-    
-    
-    
-    ////////////////////////from file
-    Mat avgVec = myPCA.getAverage();
-    Mat eigenVec = myPCA.getEigenvectors();
-    Mat facesInEigen = wtd.getFacesInEigen();
-    
+    cout << facesInEigen1.at<float>(0,0) << "  " << facesInEigen.at<float>(0,0) << endl;
+    cout << avgVec1.at<float>(0,0) << "  " << avgVec.at<float>(0,0) << endl;
+    cout << eigenVec1.at<float>(0,0) << "  " << eigenVec.at<float>(0,0) << endl;
     //final step: recognize new face from training faces
     FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
     // Show Result
