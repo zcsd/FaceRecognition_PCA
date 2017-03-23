@@ -65,6 +65,11 @@ int main(int argc, char** argv)
         cout << "Recognise Start......" << endl;
         //Initialize capture
         GetFrame getFrame(1);
+        
+        vector<string> staticsID;
+        string showID;
+        int idCounter = 0;
+        
         while (getFrame.getNextFrame(frame)) {
             //TO DO FACE DETECTION
             FaceDetector faceDetector;
@@ -76,15 +81,34 @@ int main(int argc, char** argv)
                 FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
                 // Show Result
                 string faceID = faceRecognizer.getClosetFaceID();
-                /*
-                if (faceID != "None") {
-                    cout << "Face ID: " << faceID;
-                    cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
-                }else{
-                    cout << "Unkown Face" << endl;
-                }*/
-                
-                putText(processed, faceID, Point(10,40), 4, 1, Scalar(0,0,255));
+                ////////////////////ID Probalilty Start//////////////
+                string calID;
+                int max, cnt;
+                idCounter++;
+                staticsID.push_back(faceID);
+                if (idCounter == 10) {
+                    idCounter = 0;
+                    max = 0;
+                    cnt = 0;
+                    calID = staticsID[0];
+                    for (int i = 0; i < staticsID.size(); i++) {
+                        for (int j = 0; j < staticsID.size(); j++) {
+                            if (staticsID[i] == staticsID[j]) {
+                                cnt++;
+                            }
+                        }
+                        if (cnt > max) {
+                            max = cnt;
+                            calID = staticsID[i];
+                        }
+                        cnt = 0;
+                    }
+                    staticsID.clear();
+                    //cout << max << " " << calID << endl;
+                    if(max > 5) showID = calID;
+                }
+                ////////////////////ID Probalilty END//////////////
+                putText(processed, showID, Point(10,40), 4, 1, Scalar(0,0,255));
             }else{
                 //cout << "Face detection not good" << endl;
             }
