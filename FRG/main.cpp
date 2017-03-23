@@ -47,7 +47,7 @@ int main(int argc, char** argv)
         
         if (faceDetector.goodFace()) {
             testImg = faceDetector.getFaceToTest();
-            imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
+            imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s5.bmp", testImg);
         }
         cout << "Prepare Face Finished." << endl;
         imshow("Face Recognisation", processed);
@@ -65,34 +65,37 @@ int main(int argc, char** argv)
         cout << "Recognise Start......" << endl;
         //Initialize capture
         GetFrame getFrame(1);
-        getFrame.getNextFrame(frame);
-        
-        //TO DO FACE DETECTION
-        FaceDetector faceDetector;
-        faceDetector.findFacesInImage(frame, processed);
-        
-        if (faceDetector.goodFace()) {
-            testImg = faceDetector.getFaceToTest();
-            //final step: recognize new face from training faces
-            FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
-            // Show Result
-            string faceID = faceRecognizer.getClosetFaceID();
-            if (faceID != "None") {
-                cout << "Face ID: " << faceID;
-                cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
-            }else{
-                cout << "Unkown Face" << endl;
-            }
+        while (getFrame.getNextFrame(frame)) {
+            //TO DO FACE DETECTION
+            FaceDetector faceDetector;
+            faceDetector.findFacesInImage(frame, processed);
             
+            if (faceDetector.goodFace()) {
+                testImg = faceDetector.getFaceToTest();
+                //final step: recognize new face from training faces
+                FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
+                // Show Result
+                string faceID = faceRecognizer.getClosetFaceID();
+                /*
+                if (faceID != "None") {
+                    cout << "Face ID: " << faceID;
+                    cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
+                }else{
+                    cout << "Unkown Face" << endl;
+                }*/
+                
+                putText(processed, faceID, Point(10,40), 4, 1, Scalar(0,0,255));
+            }else{
+                //cout << "Face detection not good" << endl;
+            }
             imshow("Face Recognisation", processed);
-            waitKey();
-        }else{
-            cout << "Face detection not good" << endl;
+            if ( (waitKey(20) & 255) == 27 ) break;
         }
         
     }else{
         cout << "Input wrong choice......" << endl;
     }
-   
+    
+    cout << "Program End." << endl;
     return 0;
 }

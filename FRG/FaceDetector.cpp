@@ -34,7 +34,7 @@ void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
     
     //detect faces:
     face_cascade.detectMultiScale( frameGray, facesRec, 1.1, 5, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-    cout << "faces: " << facesRec.size() << endl;
+    //cout << "faces: " << facesRec.size() << endl;
     
     if (facesRec.size() >= 1){
         rectangle(toTest, facesRec[0], Scalar( 255, 0, 255 ), 4);
@@ -48,7 +48,7 @@ void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
         vector<Rect> eyes;
         //detect eyes
         eye_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CASCADE_SCALE_IMAGE, Size(30, 30) );
-        cout << "eyes: " << eyes.size() << endl;
+        //cout << "eyes: " << eyes.size() << endl;
         
         for ( size_t j = 0; j < eyes.size(); j++ )
         {
