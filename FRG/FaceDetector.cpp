@@ -27,14 +27,14 @@ void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
     //convert the image to grayscale and normalize histogram:
     resize(toTest, toTest, Size(240, 240));
     cvtColor(toTest, frameGray, CV_BGR2GRAY);
-    cout << toTest.size() << endl;
+    //cout << toTest.size() << endl;
     equalizeHist(frameGray, frameGray);
     
     vector<Rect> facesRec;
     
     //detect faces:
     face_cascade.detectMultiScale( frameGray, facesRec, 1.1, 5, 0|CASCADE_SCALE_IMAGE, Size(30, 30) );
-    //cout << "faces: " << facesRec.size() << endl;
+    cout << "faces: " << facesRec.size() << endl;
     
     if (facesRec.size() >= 1){
         rectangle(toTest, facesRec[0], Scalar( 255, 0, 255 ), 4);

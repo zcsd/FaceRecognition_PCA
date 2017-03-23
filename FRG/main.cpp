@@ -21,69 +21,78 @@ int main(int argc, char** argv)
     vector<string> trainFacesPath;
     vector<string> trainFacesID;
     readList(trainListFilePath, trainFacesPath, trainFacesID);
-    /*
-    cout << "++++++Welcome to Face Recognisation System++++++" << endl;
-    cout << "Do you want to do training?(Y/N): ";
-    char choice;
-    scanf("%s", &choice);
     
-    if (choice == 'Y' || choice == 'y') {
-        cout << "Training Start......" << endl;
-        
-    }else{
-        cout << "Recognise Start......" << endl;
-        
-    }
-    */
-    Mat frame, processed;
-    namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
-    //Initialize capture
-    GetFrame getFrame(1);
-    getFrame.getNextFrame(frame);
-    
-    //TO DO FACE DETECTION
-    FaceDetector faceDetector;
-    faceDetector.findFacesInImage(frame, processed);
-    
-    Mat testImg;
-    if (faceDetector.goodFace()) {
-        //testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/02/s6.bmp",0);
-        testImg = faceDetector.getFaceToTest();
-        //imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
-    }else{
-        testImg = imread("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/13/s8.bmp",0);
-    }
-    
-    //do PCA analysis for training faces
-    MyPCA myPCA = MyPCA(trainFacesPath);
-    //Write trainning data to file
-    WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
-    /////////////////////////Load data
-    bool flag = 1;
     Mat avgVec, eigenVec, facesInEigen;
-    if ( flag ) {
-        facesInEigen =  readFaces(int(trainFacesID.size()));
-        avgVec = readMean();
-        eigenVec = readEigen(int(trainFacesID.size()));
+    facesInEigen =  readFaces(int(trainFacesID.size()));
+    avgVec = readMean();
+    eigenVec = readEigen(int(trainFacesID.size()));
+    
+    Mat frame, processed,testImg;
+    namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
+    
+    cout << "++++++Welcome to Face Recognisation System++++++" << endl;
+    cout << "Prepare Faces(0) or Training(1) or Recognise(2), Input your number:  ";
+    int choice;
+    scanf("%d", &choice);
+    
+    if (choice == 0) {
+        cout << "Prepare Face Start......" << endl;
+        //Initialize capture
+        GetFrame getFrame(1);
+        getFrame.getNextFrame(frame);
+        
+        //TO DO FACE DETECTION
+        FaceDetector faceDetector;
+        faceDetector.findFacesInImage(frame, processed);
+        
+        if (faceDetector.goodFace()) {
+            testImg = faceDetector.getFaceToTest();
+            imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s1.bmp", testImg);
+        }
+        cout << "Prepare Face Finished." << endl;
+        imshow("Face Recognisation", processed);
+        waitKey();
+        //Prepare finish.
+    }else if (choice == 1){
+        cout << "Traning Start......" << endl;
+        //do PCA analysis for training faces
+        MyPCA myPCA = MyPCA(trainFacesPath);
+        //Write trainning data to file
+        WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
+        //training finsih.
+        cout << "Training finsih." << endl;
+    }else if (choice == 2){
+        cout << "Recognise Start......" << endl;
+        //Initialize capture
+        GetFrame getFrame(1);
+        getFrame.getNextFrame(frame);
+        
+        //TO DO FACE DETECTION
+        FaceDetector faceDetector;
+        faceDetector.findFacesInImage(frame, processed);
+        
+        if (faceDetector.goodFace()) {
+            testImg = faceDetector.getFaceToTest();
+            //final step: recognize new face from training faces
+            FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
+            // Show Result
+            string faceID = faceRecognizer.getClosetFaceID();
+            if (faceID != "None") {
+                cout << "Face ID: " << faceID;
+                cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
+            }else{
+                cout << "Unkown Face" << endl;
+            }
+            
+            imshow("Face Recognisation", processed);
+            waitKey();
+        }else{
+            cout << "Face detection not good" << endl;
+        }
+        
     }else{
-        avgVec = myPCA.getAverage();
-        eigenVec = myPCA.getEigenvectors();
-        facesInEigen = wtd.getFacesInEigen();
+        cout << "Input wrong choice......" << endl;
     }
-    
-    //final step: recognize new face from training faces
-    FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
-    // Show Result
-    string faceID = faceRecognizer.getClosetFaceID();
-    if (faceID != "None") {
-        cout << "Face ID: " << faceID;
-        cout << "   Distance: " << faceRecognizer.getClosetDist() << endl;
-    }else{
-        cout << "Unkown Face" << endl;
-    }
-    
-    imshow("Face Recognisation", processed);
-    
-    waitKey();
+   
     return 0;
 }

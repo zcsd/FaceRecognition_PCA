@@ -73,8 +73,8 @@
 15;faces/15/s3.bmp
 15;faces/15/s4.bmp
 15;faces/15/s5.bmp
-C1;faces/16/s1.bmp
-C2;faces/16/s2.bmp
-C3;faces/16/s3.bmp
-C4;faces/16/s4.bmp
-C5;faces/16/s5.bmp
+C1;faces/16/s1_lab.bmp
+C2;faces/16/s2_lab.bmp
+C3;faces/16/s3_lab.bmp
+C4;faces/16/s4_lab.bmp
+C5;faces/16/s5_lab.bmp
