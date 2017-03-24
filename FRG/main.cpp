@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <vector>
 #include <iostream>
 #include "opencv2/core.hpp"
@@ -35,25 +36,39 @@ int main(int argc, char** argv)
     int choice;
     scanf("%d", &choice);
     
-    if (choice == 0) {
+    if ( choice == 0 ) {
         cout << "Prepare Face Start......" << endl;
         //Initialize capture
         GetFrame getFrame(1);
-        getFrame.getNextFrame(frame);
-        
-        //TO DO FACE DETECTION
-        FaceDetector faceDetector;
-        faceDetector.findFacesInImage(frame, processed);
-        
-        if (faceDetector.goodFace()) {
-            testImg = faceDetector.getFaceToTest();
-            imwrite("/Users/zichun/Documents/Assignment/FaceRecognition/FRG/s5.bmp", testImg);
+        int facesCount = 0;
+        while ( getFrame.getNextFrame(frame) ) {
+            //TO DO FACE DETECTION
+            FaceDetector faceDetector;
+            faceDetector.findFacesInImage(frame, processed);
+            resize(processed, processed, Size(480, 480));
+            imshow("Face Recognisation", processed);
+            
+            if ( faceDetector.goodFace() ) {
+                testImg = faceDetector.getFaceToTest();
+            }
+            int key = waitKey(30);
+            if ( key != -1 ) {
+                if ( (key & 255) == 27) {
+                    break;
+                }else{
+                    facesCount++;
+                    string tempPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/faces/temp/s";
+                    tempPath += to_string(facesCount);
+                    tempPath += ".bmp";
+                    imwrite(tempPath, testImg);
+                    cout << facesCount << " Face Finished." << endl;
+                }
+            }
         }
+        
         cout << "Prepare Face Finished." << endl;
-        imshow("Face Recognisation", processed);
-        waitKey();
         //Prepare finish.
-    }else if (choice == 1){
+    }else if ( choice == 1 ){
         cout << "Traning Start......" << endl;
         //do PCA analysis for training faces
         MyPCA myPCA = MyPCA(trainFacesPath);
@@ -61,7 +76,7 @@ int main(int argc, char** argv)
         WriteTrainData wtd = WriteTrainData(myPCA, trainFacesID);
         //training finsih.
         cout << "Training finsih." << endl;
-    }else if (choice == 2){
+    }else if ( choice == 2 ){
         cout << "Recognise Start......" << endl;
         //Initialize capture
         GetFrame getFrame(1);
@@ -112,6 +127,7 @@ int main(int argc, char** argv)
             }else{
                 //cout << "Face detection not good" << endl;
             }
+            resize(processed, processed, Size(480, 480));
             imshow("Face Recognisation", processed);
             if ( (waitKey(20) & 255) == 27 ) break;
         }
