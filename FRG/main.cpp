@@ -84,6 +84,7 @@ int main(int argc, char** argv)
         vector<string> staticsID;
         string showID;
         int idCounter = 0;
+        int noFace = 0;
         
         while (getFrame.getNextFrame(frame)) {
             //TO DO FACE DETECTION
@@ -97,11 +98,14 @@ int main(int argc, char** argv)
                 // Show Result
                 string faceID = faceRecognizer.getClosetFaceID();
                 ////////////////////ID Probalilty Start//////////////
+                if(noFace > 8) {
+                    showID = faceID;
+                }
                 string calID;
                 int max, cnt;
                 idCounter++;
                 staticsID.push_back(faceID);
-                if (idCounter == 10) {
+                if (idCounter == 8) {
                     idCounter = 0;
                     max = 0;
                     cnt = 0;
@@ -119,13 +123,13 @@ int main(int argc, char** argv)
                         cnt = 0;
                     }
                     staticsID.clear();
-                    //cout << max << " " << calID << endl;
-                    if(max > 5) showID = calID;
+                    if(max > 4) showID = calID;
                 }
+                noFace = 0;
                 ////////////////////ID Probalilty END//////////////
                 putText(processed, showID, Point(10,40), 4, 1, Scalar(0,0,255));
             }else{
-                //cout << "Face detection not good" << endl;
+                noFace++;
             }
             resize(processed, processed, Size(480, 480));
             imshow("Face Recognisation", processed);
