@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace cv;
-
+//read training list
 void readList(string& listFilePath, vector<string>& facesPath, vector<string>& facesID)
 {
     ifstream file(listFilePath.c_str(), ifstream::in);
@@ -37,7 +37,7 @@ void readList(string& listFilePath, vector<string>& facesPath, vector<string>& f
         facesID.push_back(id);
     }
 }
-
+//read faces in eigenspace that has been trained
 Mat readFaces(int noOfFaces)
 {
     Mat faces = Mat::zeros(noOfFaces, noOfFaces, CV_32FC1);
@@ -65,7 +65,7 @@ Mat readFaces(int noOfFaces)
     //cout << faces.row(14).at<float>(14) << endl;
     return faces;
 }
-
+//read average face of all faces
 Mat readMean()
 {
     Mat mean = Mat::zeros(10000, 1, CV_32FC1);
@@ -91,7 +91,7 @@ Mat readMean()
     //cout << mean.col(0).at<float>(1) << endl;
     return mean;
 }
-
+//read eigenvector
 Mat readEigen(int noOfFaces)
 {
     Mat eigen = Mat::zeros(noOfFaces, 10000, CV_32FC1);

@@ -21,8 +21,9 @@ int main(int argc, char** argv)
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/list/train_list.txt";
     vector<string> trainFacesPath;
     vector<string> trainFacesID;
+    //read training list and ID from txt file
     readList(trainListFilePath, trainFacesPath, trainFacesID);
-    
+    //read training data(faces, eigenvector, average face) from txt file
     Mat avgVec, eigenVec, facesInEigen;
     facesInEigen =  readFaces(int(trainFacesID.size()));
     avgVec = readMean();
@@ -65,7 +66,7 @@ int main(int argc, char** argv)
                 }
             }
         }
-        
+        //after prepare one group faces, copy folder to "faces" folder
         cout << "Prepare Face Finished." << endl;
         //Prepare finish.
     }else if ( choice == 1 ){
@@ -90,14 +91,15 @@ int main(int argc, char** argv)
             //TO DO FACE DETECTION
             FaceDetector faceDetector;
             faceDetector.findFacesInImage(frame, processed);
-            
+            //Only recoginise faces that can be detected
             if (faceDetector.goodFace()) {
                 testImg = faceDetector.getFaceToTest();
                 //final step: recognize new face from training faces
                 FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
                 // Show Result
                 string faceID = faceRecognizer.getClosetFaceID();
-                ////////////////////ID Probalilty Start//////////////
+                ////////////////////ID Probalilty Start////////////////
+                //To reject sudden wrong recognise
                 if(noFace > 8) {
                     showID = faceID;
                 }
@@ -123,6 +125,7 @@ int main(int argc, char** argv)
                         cnt = 0;
                     }
                     staticsID.clear();
+                    //4 out of 8 faces is same => update showing ID
                     if(max > 4) showID = calID;
                 }
                 noFace = 0;

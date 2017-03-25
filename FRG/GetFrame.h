@@ -1,3 +1,4 @@
+/*Capture frame from webcam*/
 #ifndef GET_FRAME_H
 #define GET_FRAME_H
 

@@ -1,3 +1,4 @@
+/*PCA Process for tranning data*/
 #ifndef MY_PCA_H
 #define MY_PCA_H
 

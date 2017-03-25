@@ -1,3 +1,4 @@
+/*Detect face from input frame and do some preprocess*/
 #ifndef FACE_DETECTOR_H
 #define	FACE_DETECTOR_H
 

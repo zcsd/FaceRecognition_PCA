@@ -1,3 +1,4 @@
+/*Write trainging data fo txt file*/
 #ifndef WRITE_TRAIN_DATA
 #define WRITE_TRAIN_DATA
 

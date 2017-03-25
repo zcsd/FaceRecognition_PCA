@@ -19,7 +19,7 @@ void FaceRecognizer::projectFace(Mat testVec, Mat _avgVec, Mat _eigenVec){
     subtract(testVec, _avgVec, tmpData);
     testPrjFace = _eigenVec * tmpData;
 }
-
+//Find the closet Euclidean Distance between input and database
 void FaceRecognizer::recognize(Mat testPrjFace, Mat _facesInEigen, vector<string>& _trainFacesID)
 {
     for (int i =0; i < _trainFacesID.size(); i++) {

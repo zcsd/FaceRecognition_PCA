@@ -1,3 +1,4 @@
+/*Recognise new input face from database*/
 #ifndef FACE_RECOGNIZER_H
 #define FACE_RECOGNIZER_H
 
@@ -23,7 +24,7 @@ private:
     Mat testVec;
     Mat testPrjFace;
     string closetFaceID = "None";
-    double closetFaceDist = 6000;
+    double closetFaceDist = 5500;
 };
 
 #endif

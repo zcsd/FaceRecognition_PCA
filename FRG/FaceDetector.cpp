@@ -15,7 +15,7 @@ FaceDetector::FaceDetector()
         cout << "ERROR:***Can not load eye cascade***" << endl;
     
 }
-
+//Eye detection accuracy is very bad, so don't check the rotation angle
 void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
     Mat frameGray;
     
