@@ -21,13 +21,14 @@ int main(int argc, char** argv)
     string trainListFilePath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/list/train_list.txt";
     vector<string> trainFacesPath;
     vector<string> trainFacesID;
+    vector<string> loadedFacesID;
     //read training list and ID from txt file
     readList(trainListFilePath, trainFacesPath, trainFacesID);
     //read training data(faces, eigenvector, average face) from txt file
     Mat avgVec, eigenVec, facesInEigen;
-    facesInEigen =  readFaces(int(trainFacesID.size()));
+    facesInEigen =  readFaces(100, loadedFacesID);
     avgVec = readMean();
-    eigenVec = readEigen(int(trainFacesID.size()));
+    eigenVec = readEigen(100);
     
     Mat frame, processed,testImg;
     namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
@@ -95,7 +96,7 @@ int main(int argc, char** argv)
             if (faceDetector.goodFace()) {
                 testImg = faceDetector.getFaceToTest();
                 //final step: recognize new face from training faces
-                FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, trainFacesID);
+                FaceRecognizer faceRecognizer = FaceRecognizer(testImg, avgVec, eigenVec, facesInEigen, loadedFacesID);
                 // Show Result
                 string faceID = faceRecognizer.getClosetFaceID();
                 ////////////////////ID Probalilty Start////////////////
@@ -130,7 +131,7 @@ int main(int argc, char** argv)
                 }
                 noFace = 0;
                 ////////////////////ID Probalilty END//////////////
-                putText(processed, showID, Point(10,40), 4, 1, Scalar(0,0,255));
+                putText(processed, faceID, Point(10,40), 4, 1, Scalar(0,0,255));
             }else{
                 noFace++;
             }

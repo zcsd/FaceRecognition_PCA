@@ -38,7 +38,7 @@ void readList(string& listFilePath, vector<string>& facesPath, vector<string>& f
     }
 }
 //read faces in eigenspace that has been trained
-Mat readFaces(int noOfFaces)
+Mat readFaces(int noOfFaces, vector<string>& loadedFaceID)
 {
     Mat faces = Mat::zeros(noOfFaces, noOfFaces, CV_32FC1);
     string facesDataPath = "/Users/zichun/Documents/Assignment/FaceRecognition/FRG/data/facesdata.txt";
@@ -49,15 +49,16 @@ Mat readFaces(int noOfFaces)
     }
     
     string line, id;
-    
+    loadedFaceID.clear();
     for (int i = 0; i < noOfFaces; i++) {
         getline(readFaces, line);
         stringstream lines(line);
         getline(lines, id, ':');
+        loadedFaceID.push_back(id);
         for (int j = 0; j < noOfFaces; j++) {
             string data;
             getline(lines, data, ' ');
-            faces.row(i).at<float>(j) = atof(data.c_str());
+            faces.col(i).at<float>(j) = atof(data.c_str());
         }
     }
     

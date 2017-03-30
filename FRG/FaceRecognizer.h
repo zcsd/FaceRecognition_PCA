@@ -12,10 +12,10 @@ using namespace cv;
 
 class FaceRecognizer {
 public:
-    FaceRecognizer(Mat _testImg, Mat _avgVec, Mat _eigenVec, Mat _facesInEigen, vector<string>& _trainFacesID);
+    FaceRecognizer(Mat _testImg, Mat _avgVec, Mat _eigenVec, Mat _facesInEigen, vector<string>& _loadedFacesID);
     void prepareFace(Mat _testImg);
     void projectFace(Mat testVec, Mat _avgVec, Mat _eigenVec);
-    void recognize(Mat testPrjFace, Mat _facesInEigen, vector<string>& _trainFacesID);
+    void recognize(Mat testPrjFace, Mat _facesInEigen, vector<string>& _loadedFacesID);
     string getClosetFaceID();
     double getClosetDist();
     ~FaceRecognizer();
@@ -24,7 +24,7 @@ private:
     Mat testVec;
     Mat testPrjFace;
     string closetFaceID = "None";
-    double closetFaceDist = 5500;
+    double closetFaceDist = 3400;
 };
 
 #endif

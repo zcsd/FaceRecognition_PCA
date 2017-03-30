@@ -35,10 +35,10 @@ void WriteTrainData::writeTrainFacesData(vector<string>& _trainFacesID)
     }
     
     for (int i = 0; i < _trainFacesID.size(); i++) {
-        writeFaceFile << i + 1 << "#";
+        //writeFaceFile << i + 1 << "#";
         writeFaceFile << _trainFacesID[i] << ":";
         for (int j = 0; j < trainFacesInEigen.rows; j++) {
-            writeFaceFile << trainFacesInEigen.row(i).at<float>(j);
+            writeFaceFile << trainFacesInEigen.col(i).at<float>(j);
             writeFaceFile << " ";
         }
         writeFaceFile << "\n";
