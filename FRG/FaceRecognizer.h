@@ -24,7 +24,7 @@ private:
     Mat testVec;
     Mat testPrjFace;
     string closetFaceID = "None";
-    double closetFaceDist = 3400;
+    double closetFaceDist = 3500;
 };
 
 #endif

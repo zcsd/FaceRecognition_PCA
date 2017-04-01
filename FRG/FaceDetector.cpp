@@ -27,6 +27,8 @@ void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
     //convert the image to grayscale and normalize histogram:
     resize(toTest, toTest, Size(240, 240));
     cvtColor(toTest, frameGray, CV_BGR2GRAY);
+    Mat toReturn;
+    frameGray.copyTo(toReturn);
     //cout << toTest.size() << endl;
     equalizeHist(frameGray, frameGray);
     
@@ -39,7 +41,7 @@ void FaceDetector::findFacesInImage(Mat &frameRGB, Mat &toTest) {
     if (facesRec.size() >= 1){
         rectangle(toTest, facesRec[0], Scalar( 255, 0, 255 ), 4);
         
-        Mat faceROI = frameGray(facesRec[0]);
+        Mat faceROI = toReturn(facesRec[0]);
         //cout << "ROI SIZE " << faceROI.size() << endl;
         faceROI.copyTo(faceToTest);
         resize(faceToTest, faceToTest, Size(100,100));

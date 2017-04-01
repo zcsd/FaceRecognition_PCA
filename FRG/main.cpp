@@ -26,9 +26,9 @@ int main(int argc, char** argv)
     readList(trainListFilePath, trainFacesPath, trainFacesID);
     //read training data(faces, eigenvector, average face) from txt file
     Mat avgVec, eigenVec, facesInEigen;
-    facesInEigen =  readFaces(100, loadedFacesID);
+    facesInEigen =  readFaces(int(trainFacesID.size()), loadedFacesID);
     avgVec = readMean();
-    eigenVec = readEigen(100);
+    eigenVec = readEigen(int(trainFacesID.size()));
     
     Mat frame, processed,testImg;
     namedWindow("Face Recognisation", CV_WINDOW_NORMAL);
