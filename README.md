@@ -1,4 +1,4 @@
-Human Face Recognition System using C/C++ with the PCA Approach
+Human Face Recognition System using C++ with the PCA Approach
 
 OS: Mac OS X , preinstall OpenCV-3.1.0
 
@@ -8,4 +8,4 @@ Input: real-time web-camera
 
 Note:
 
-If you want use the code in Windows, please change the header and file path(/, \)
+If you want use the code in Windows, please change the header and file path
